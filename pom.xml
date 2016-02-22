@@ -145,6 +145,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.mytechia</groupId>
+            <artifactId>mytechia-commons-library</artifactId>
+            <version>1.0.9</version>
+        </dependency>
     </dependencies>
 
 
