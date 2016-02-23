@@ -24,6 +24,9 @@ package com.mytechia.commons.framework.simplemessageprotocol;
 
 import com.mytechia.commons.framework.simplemessageprotocol.exception.MessageFormatException;
 import com.mytechia.commons.util.conversion.EndianConversor;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 
@@ -35,12 +38,17 @@ import java.util.Arrays;
  * File: Command.java
  * Date: 22/02/2008
  * Changelog:
+ *      23/02/2016  --  victor - Refactor: merge with Message
  *      26/01/2010  --  gervasio - Change in the size of the header
  *      22/02/2008  --  Initial version
  */
-public abstract class Command extends Message
+public abstract class Command
 {
-    
+
+    public static final byte INIT_BYTE = 0x45;
+    public static final int HEADER_CHECKSUM_SIZE = 1;
+    public static final int DATA_CHECKSUM_SIZE = 1;
+
     public static final int MAX_MESSAGE_SIZE = 2500; //bytes
     
     
@@ -56,8 +64,15 @@ public abstract class Command extends Message
     public static final int DATA_INDEX = COMMAND_HEADER_SIZE;
 
 
+    private byte commandType = 0;
+    private int sequenceNumber = 0;
+    private byte headerChecksum = 0;
+    private byte[] data = null;
+    private byte dataChecksum = 0;
+
     private byte errorCode;
     private int dataSize;
+
 
     protected int decodingIndex;
 
@@ -71,20 +86,127 @@ public abstract class Command extends Message
         this.decodeMessage(message);
     }
 
-    
-    
-    @Override
-    public void setCommandType(byte commandType) {
-       super.setCommandType(commandType);
+
+    public byte getCommandType() {
+        return commandType;
+    }
+
+    public int getSequenceNumber() {
+        return sequenceNumber;
     }
 
 
-    @Override
+
+    /**
+     * Obtain data field size (include 'user data' and 'data checksum')
+     * @return
+     */
+    public int getDataFieldSize() {
+        int dataSize = getDataSize();
+
+        if (dataSize > 0) {
+            return dataSize + DATA_CHECKSUM_SIZE;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    public byte getHeaderChecksum() {
+        return headerChecksum;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public byte getDataChecksum() {
+        return dataChecksum;
+    }
+
+    protected void setCommandType(byte commandType) {
+        this.commandType = commandType;
+    }
+
+    protected void setSequenceNumber(int sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
+
+    protected void setHeaderChecksum(byte headerChecksum) {
+        this.headerChecksum = headerChecksum;
+    }
+
+    protected void setDataChecksum(byte dataChecksum) {
+        this.dataChecksum = dataChecksum;
+    }
+
+
+
+
+    /**
+     * Calculate checksum byte for 'length' bytes beginning at 'initIndex'.
+     *
+     * @param data Array of data.
+     * @param initIndex Array index for first byte.
+     * @param length Length of data for that calculate checksum.
+     * @return Calculated checksum byte.
+     */
+    protected byte calcChecksum(byte[] data, int initIndex, int length) {
+        byte check = 0;
+
+        for (int i = 0; i < length; i++) {
+            check ^= data[initIndex + i];
+        }
+
+        return check;
+    }
+
+
+
+    protected int readString(StringBuilder string, byte[] data, int offset) throws MessageFormatException
+    {
+        return readStringFromBytes(string, data, offset);
+    }
+
+    public static int readStringFromBytes(StringBuilder string, byte[] data, int offset) throws MessageFormatException
+    {
+
+        if(data.length<=offset){
+            throw new  MessageFormatException("Invalid data size");
+        }
+
+        int localOffset = 0;
+        int idLen = EndianConversor.byteArrayLittleEndianToShort(data, offset);
+        localOffset += EndianConversor.SHORT_SIZE_BYTES;
+        string.replace(0, idLen, new String(data, offset+localOffset, idLen));
+        string.setLength(idLen);
+        localOffset += idLen;
+        return localOffset;
+    }
+
+
+    protected void writeString(ByteArrayOutputStream dataStream, String string) throws IOException
+    {
+        writeStringInStream(dataStream, string);
+    }
+
+    public static void writeStringInStream(ByteArrayOutputStream dataStream, String string) throws IOException
+    {
+        byte[] lenData = new byte[2];
+        byte[] idData = string.getBytes();
+        EndianConversor.shortToLittleEndian((short) idData.length, lenData, 0);
+        dataStream.write(lenData);
+        dataStream.write(idData);
+    }
+
+
     public void setData(byte[] data) {
-        super.setData(data);
+        this.data = data;
         this.dataSize = data.length;
     }
-    
+
+
+
     /**
      * Obtain user data size (data without checksum).
      * @return
@@ -93,11 +215,6 @@ public abstract class Command extends Message
         return (getData() == null) ? this.dataSize : getData().length;        
     }
 
-    
-    @Override
-    public void setSequenceNumber(int sequenceNumber) {
-        super.setSequenceNumber(sequenceNumber);
-    }    
 
 
     public void setErrorCode(byte errorCode)
@@ -125,7 +242,7 @@ public abstract class Command extends Message
         byte[] bytes = new byte[COMMAND_HEADER_SIZE + getDataFieldSize()];
         
         // Init byte
-        bytes[INIT_BYTE_INDEX] = Message.INIT_BYTE;
+        bytes[INIT_BYTE_INDEX] = INIT_BYTE;
         // Command type
         bytes[COMMAND_TYPE_INDEX] = getCommandType();
         // Secuence number   
@@ -180,7 +297,7 @@ public abstract class Command extends Message
         if (messageHeaderData.length < COMMAND_HEADER_SIZE) {
             throw new MessageFormatException("Invalid message size.");
         }
-        if (messageHeaderData[INIT_BYTE_INDEX] != Message.INIT_BYTE) {
+        if (messageHeaderData[INIT_BYTE_INDEX] != INIT_BYTE) {
             throw new MessageFormatException("Checksum error.");
         }
         
@@ -270,33 +387,6 @@ public abstract class Command extends Message
 
     }
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Command other = (Command) obj;
-        if (this.errorCode != other.errorCode) {
-            return false;
-        }
-        if (this.dataSize != other.dataSize) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int hash = 7;
-        hash = 37 * hash + this.errorCode;
-        hash = 37 * hash + this.dataSize;
-        return hash;
-    }
 
     
     /**
