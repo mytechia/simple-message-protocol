@@ -41,6 +41,8 @@ public class MessageFormatException extends CommunicationException {
         super(message);
     }
 
-    
+    public MessageFormatException(Exception ex, String message) {
+        super(ex, message);
+    }
     
 }

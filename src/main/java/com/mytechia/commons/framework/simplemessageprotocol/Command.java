@@ -190,13 +190,14 @@ public abstract class Command
         writeStringInStream(dataStream, string);
     }
 
-    public static void writeStringInStream(ByteArrayOutputStream dataStream, String string) throws IOException
+    public static int writeStringInStream(ByteArrayOutputStream dataStream, String string) throws IOException
     {
         byte[] lenData = new byte[2];
         byte[] idData = string.getBytes();
         EndianConversor.shortToLittleEndian((short) idData.length, lenData, 0);
         dataStream.write(lenData);
         dataStream.write(idData);
+        return lenData.length + idData.length;
     }
 
 
