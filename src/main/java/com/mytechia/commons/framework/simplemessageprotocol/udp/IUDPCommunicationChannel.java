@@ -25,6 +25,7 @@
 
 package com.mytechia.commons.framework.simplemessageprotocol.udp;
 
+import com.mytechia.commons.framework.simplemessageprotocol.Command;
 import com.mytechia.commons.framework.simplemessageprotocol.channel.INetworkBasicCommunicationChannel;
 import com.mytechia.commons.framework.simplemessageprotocol.exception.CommunicationException;
 import java.net.InetAddress;
@@ -61,7 +62,7 @@ public interface IUDPCommunicationChannel extends INetworkBasicCommunicationChan
 
     public void broadcast(byte [] data, int offset, int count) throws CommunicationException;
 
-    public void broadcast(byte [] data) throws CommunicationException;
+    public void broadcast(Command msg) throws CommunicationException;
     
     void close();
     

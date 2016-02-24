@@ -21,6 +21,7 @@
 
 package com.mytechia.commons.framework.simplemessageprotocol.channel;
 
+import com.mytechia.commons.framework.simplemessageprotocol.Command;
 import com.mytechia.commons.framework.simplemessageprotocol.exception.CommunicationException;
 
 /** One-to-many communication channel
@@ -39,7 +40,7 @@ public interface INetworkBasicCommunicationChannel
     
     public void send(IAddress addr, byte [] data, int offset, int count) throws CommunicationException;
     
-    public void send(IAddress addr, byte [] data) throws CommunicationException;
+    public void send(IAddress addr, Command msg) throws CommunicationException;
     
     public ReceiveResult receive(byte [] data, int offset, int count, long timeout) throws CommunicationException;
     

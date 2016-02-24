@@ -222,13 +222,13 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         this.broadcastAddressList.add(new UDPAddress(defaultAddr, port));
     }
 
-    @Override
+
     public int getPort()
     {
         return udpSocket.getLocalPort();
     }
 
-    @Override
+
     public void send(IAddress dev, byte[] data, int offset, int count) throws CommunicationException
     {
 
@@ -253,13 +253,14 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
 
     }
 
-    @Override
-    public void send(IAddress dev, byte[] data) throws CommunicationException
-    {
-        send(dev, data, 0, data.length);
-    }
 
-    @Override
+    public void send(IAddress dev, Command msg) throws CommunicationException
+    {
+        byte[] rawData = msg.codeMessage();
+        send(dev, rawData, 0, rawData.length);
+    }           
+
+
     public void broadcast(byte[] data, int offset, int count) throws CommunicationException
     {
         for (UDPAddress udpDev : this.broadcastAddressList)
@@ -268,16 +269,16 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         }
     }
 
-    @Override
-    public void broadcast(byte[] data) throws CommunicationException
+
+    public void broadcast(Command msg) throws CommunicationException
     {
         for (UDPAddress udpDev : this.broadcastAddressList)
         {
-            this.send(udpDev, data);
+            this.send(udpDev, msg);
         }
     }
 
-    @Override
+
     public ReceiveResult receive(byte[] data, int offset, int count, long timeout) throws CommunicationException
     {
         try
@@ -293,19 +294,18 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
 
     }
 
-    @Override
     public ReceiveResult receive(byte[] data, int offset, int count) throws CommunicationException
     {
         return receive(data, offset, count, -1);
     }
 
-    @Override
+
     public ReceiveResult receive(byte[] data) throws CommunicationException
     {
         return receive(data, 0, data.length);
     }
 
-    @Override
+
     public ReceiveResult receive() throws CommunicationException
     {
         byte[] data = new byte[Command.MAX_MESSAGE_SIZE];
@@ -321,13 +321,13 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         }
     }
 
-    @Override
+
     public InetAddress getIPAddress()
     {
         return this.defaultAddr;
     }
     
-    @Override
+
     public boolean isClosed() {
 
         if (udpSocket != null) {
@@ -337,7 +337,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         return true;
     }
 
-    @Override
+
     public void close() {
         
         if(udpSocket!=null){
