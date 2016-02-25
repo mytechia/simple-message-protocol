@@ -25,6 +25,6 @@ package com.mytechia.commons.framework.simplemessageprotocol;
  */
 public enum MessageFieldType {
 
-    BYTE, SHORT, USHORT, INT, UINT, LONG, STRING, BYTEARRAY;
+    BYTE, SHORT, USHORT, INT, UINT, LONG, DOUBLE, STRING, BYTEARRAY;
 
 }

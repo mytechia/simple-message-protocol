@@ -65,6 +65,11 @@ public class MessageCoder {
     }
 
 
+    public byte[] getBytes() {
+        return this.dataStream.toByteArray();
+    }
+
+
     public MessageCoder writeByte(byte data, String name) {
         this.dataStream.write(data);
         messageFieldInfoList.add(
@@ -207,6 +212,33 @@ public class MessageCoder {
                         EndianConversor.LONG_SIZE_BYTES,
                         this.nextFieldIndex++,
                         MessageFieldType.LONG
+                ));
+
+        return this;
+    }
+
+
+    public MessageCoder writeDouble(double data, String name) throws MessageFormatException {
+        byte[] dataArray = new byte[EndianConversor.LONG_SIZE_BYTES];
+
+        if (this.endianness == Endianness.LITTLE_ENDIAN) {
+            EndianConversor.doubleToLittleEndian(data, dataArray, 0);
+        } else {
+            EndianConversor.doubleToBigEndian(data, dataArray, 0);
+        }
+
+        try {
+            this.dataStream.write(dataArray);
+        } catch (IOException e) {
+            throw new MessageFormatException(e, this.getClass().getName());
+        }
+
+        messageFieldInfoList.add(
+                new MessageFieldInfo(
+                        name,
+                        EndianConversor.LONG_SIZE_BYTES,
+                        this.nextFieldIndex++,
+                        MessageFieldType.DOUBLE
                 ));
 
         return this;

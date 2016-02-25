@@ -27,7 +27,9 @@ import com.mytechia.commons.util.conversion.EndianConversor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /** 
@@ -73,23 +75,71 @@ public abstract class Command
     private byte errorCode;
     private int dataSize;
 
+    private Endianness endianness = Endianness.LITTLE_ENDIAN;
+
+    private MessageCoder messageCoder = null;
+
+    private MessageDecoder messageDecoder = null;
+
 
     protected int decodingIndex;
 
     
     public Command() {
+        this.messageCoder = new MessageCoder(this.endianness);
+    }
+
+
+    public Command(Endianness endianness) {
+        this.endianness = endianness;
     }
 
 
     public Command(byte [] message) throws MessageFormatException
     {
+        this(Endianness.LITTLE_ENDIAN, message);
+    }
+
+
+    public Command(Endianness endianness, byte [] message) throws MessageFormatException
+    {
+        this(endianness);
+        this.messageDecoder = new MessageDecoder(this.endianness, message, DATA_INDEX);
         this.decodeMessage(message);
+    }
+
+
+    protected MessageCoder getMessageCoder() {
+        this.messageCoder = new MessageCoder(this.endianness);
+        return this.messageCoder;
+    }
+
+
+    protected MessageDecoder getMessageDecoder() {
+        return this.messageDecoder;
+    }
+
+
+    public List<MessageFieldInfo> getCodingMessageInfo() {
+        if (null != this.messageCoder) {
+            return this.messageCoder.getMessageFieldInfo();
+        }
+        return new ArrayList<>();
+    }
+
+
+    public List<MessageFieldInfo> getDecodingMessageInfo() {
+        if (null != this.messageDecoder) {
+            return this.messageDecoder.getMessageFieldInfo();
+        }
+        return new ArrayList<>();
     }
 
 
     public byte getCommandType() {
         return commandType;
     }
+
 
     public int getSequenceNumber() {
         return sequenceNumber;
@@ -314,7 +364,7 @@ public abstract class Command
             this.dataSize = dataSizeValue;
         }
         else {
-            throw new MessageFormatException("Invalid data size value.");
+            throw new MessageFormatException("Invalid data size value: " + dataSizeValue);
         }
         
         // Command type
@@ -327,7 +377,7 @@ public abstract class Command
             setSequenceNumber(sequenceNumber);
         }
         else {
-            throw new MessageFormatException("Invalid sequence number value.");
+            throw new MessageFormatException("Invalid sequence number value: " + sequenceNumber);
         }        
         // Head checksum
         setHeaderChecksum(headChecksum);

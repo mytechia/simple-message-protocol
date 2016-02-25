@@ -74,6 +74,11 @@ public class MessageDecoder {
     }
 
 
+    public int getArrayIndex() {
+        return this.arrayIndex;
+    }
+
+
     public byte readByte(String name) {
         this.messageFieldInfoList.add(
             new MessageFieldInfo(
@@ -184,6 +189,32 @@ public class MessageDecoder {
                         EndianConversor.LONG_SIZE_BYTES,
                         this.nextFieldIndex++,
                         MessageFieldType.LONG
+                )
+        );
+
+        return data;
+
+    }
+
+
+    public double readDouble(String name) {
+
+        double data = 0;
+
+        if (this.endianness == Endianness.LITTLE_ENDIAN) {
+            data = EndianConversor.byteArrayLittleEndianToDouble(this.dataArray, this.arrayIndex);
+        } else {
+            data = EndianConversor.byteArrayBigEndianToDouble(this.dataArray, this.arrayIndex);
+        }
+
+        this.arrayIndex += EndianConversor.LONG_SIZE_BYTES;
+
+        this.messageFieldInfoList.add(
+                new MessageFieldInfo(
+                        name,
+                        EndianConversor.LONG_SIZE_BYTES,
+                        this.nextFieldIndex++,
+                        MessageFieldType.DOUBLE
                 )
         );
 
