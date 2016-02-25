@@ -223,6 +223,18 @@ public class MessageDecoder {
     }
 
 
+    public double[] readDoubleArray(String name, int elementsNumber) {
+
+        double[] data = new double[elementsNumber];
+
+        for(int i = 0; i < elementsNumber; i++){
+            data[i] = this.readDouble(name + "_" + (i+1));
+        }
+
+        return data;
+    }
+
+
     public String readString(String name) throws MessageFormatException {
 
         StringBuilder stringBuilder = new StringBuilder(50);

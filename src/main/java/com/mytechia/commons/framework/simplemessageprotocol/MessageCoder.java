@@ -245,6 +245,16 @@ public class MessageCoder {
     }
 
 
+    public MessageCoder writeDoubleArray(double[] data, String name) throws MessageFormatException {
+
+        for(int i = 0; i < data.length; i++){
+            this.writeDouble(data[i], name + "_" + (i+1));
+        }
+
+        return this;
+    }
+
+
     public MessageCoder writeString (String data, String name) throws MessageFormatException {
         try {
             final int lengthInBytes = writeStringInStream(this.dataStream, data);
