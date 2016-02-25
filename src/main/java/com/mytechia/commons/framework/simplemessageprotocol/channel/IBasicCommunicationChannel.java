@@ -1,7 +1,7 @@
 /*******************************************************************************
- *   
+ *
  *   Copyright 2008 Mytech Ingenieria Aplicada <http://www.mytechia.com>, Alejandro Paz
- * 
+ *
  *   This file is part of Mytechia Commons.
  *
  *   Mytechia Commons is free software: you can redistribute it and/or modify
@@ -16,16 +16,17 @@
  *
  *   You should have received a copy of the GNU Lesser General Public License
  *   along with Mytechia Commons.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  ******************************************************************************/
 
 package com.mytechia.commons.framework.simplemessageprotocol.channel;
 
-import com.mytechia.commons.framework.simplemessageprotocol.Command;
 import com.mytechia.commons.framework.simplemessageprotocol.exception.CommunicationException;
+import com.mytechia.commons.framework.simplemessageprotocol.exception.TimeoutException;
 
-/** One-to-many communication channel
- * 
+/** One-to-one communication channel
+ *
+ *
  * @author alex
  * @version 1
  *
@@ -35,20 +36,32 @@ import com.mytechia.commons.framework.simplemessageprotocol.exception.Communicat
  *
  *      12-mar-2008  --  Initial version
  */
-public interface INetworkBasicCommunicationChannel extends ICommunicationChannel
-{
-    
-    public void send(IAddress addr, byte [] data, int offset, int count) throws CommunicationException;
-    
-    public void send(IAddress addr, Command msg) throws CommunicationException;
-    
-    public ReceiveResult receive(byte [] data, int offset, int count, long timeout) throws CommunicationException;
-    
-    public ReceiveResult receive(byte [] data, int offset, int count) throws CommunicationException;
-    
-    public ReceiveResult receive(byte[] data) throws CommunicationException;
+public interface IBasicCommunicationChannel extends ICommunicationChannel {
 
-    public ReceiveResult receive() throws CommunicationException;
-    
-    
+    public void send(byte [] data, int offset, int count) throws CommunicationException;
+
+    public void send(byte [] data) throws CommunicationException;
+
+    public int receive(byte [] data, int offset, int count, long timeout) throws CommunicationException;
+
+    public int receive(byte [] data, int offset, int count) throws CommunicationException;
+
+    public int receive(byte[] data) throws CommunicationException;
+
+    public void receiveComplete(byte[] data) throws CommunicationException, TimeoutException;
+
+    public int sendReceive(
+            byte[] sendData, int sendOffset, int sendCount,
+            byte[] recvData, int recvOffset, int recvCount, long timeout)
+            throws CommunicationException;
+
+    public int sendReceive(
+            byte [] sendData, int sendOffset, int sendCount,
+            byte [] recvData, int recvOffset, int recvCount)
+            throws CommunicationException;
+
+    public int sendReceive(byte [] sendData, byte [] recvData)
+            throws CommunicationException;
+
+
 }

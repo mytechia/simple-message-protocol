@@ -22,11 +22,15 @@
  */
 package com.mytechia.commons.framework.simplemessageprotocol.udp;
 
+import ch.qos.logback.classic.Logger;
 import com.mytechia.commons.framework.simplemessageprotocol.Command;
+import com.mytechia.commons.framework.simplemessageprotocol.MessageFactory;
 import com.mytechia.commons.framework.simplemessageprotocol.channel.IAddress;
 import com.mytechia.commons.framework.simplemessageprotocol.channel.ReceiveResult;
 import com.mytechia.commons.framework.simplemessageprotocol.exception.CommunicationException;
 import com.mytechia.commons.util.net.IPUtil;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -38,8 +42,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -48,6 +50,8 @@ import java.util.logging.Logger;
 public class UDPCommunicationChannelImplementation implements IUDPCommunicationChannel
 {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(UDPCommunicationChannelImplementation.class);
+
     private DatagramSocket udpSocket;
 
     private int port;
@@ -55,6 +59,10 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
     private ArrayList<UDPAddress> broadcastAddressList;
 
     private InetAddress defaultAddr;
+
+    private MessageFactory messageFactory = null;
+
+
 
     /**
      * Opens the socket in one given network interface.
@@ -72,7 +80,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         this.udpSocket.bind(new InetSocketAddress(ip, port));
         if (!this.udpSocket.getReuseAddress())
         {
-            Logger.getAnonymousLogger().log(Level.WARNING, "Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
+            LOGGER.warn("Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
         }
         this.setBroadcastAddressFromNetworkInterface(InetAddress.getByName(ip));
     }
@@ -93,7 +101,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         this.udpSocket.bind(new InetSocketAddress(port));
         if (!this.udpSocket.getReuseAddress())
         {
-            Logger.getAnonymousLogger().log(Level.WARNING, "Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
+            LOGGER.warn("Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
         }
         setBroadcastAdresses();
     }
@@ -129,7 +137,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
 
         if (!this.udpSocket.getReuseAddress())
         {
-            Logger.getAnonymousLogger().log(Level.WARNING, "Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
+            LOGGER.warn("Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
         }
     }
 
@@ -152,7 +160,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         this.udpSocket.bind(new InetSocketAddress(ipAddress, port));
         if (!this.udpSocket.getReuseAddress())
         {
-            Logger.getAnonymousLogger().log(Level.WARNING, "Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
+            LOGGER.warn("Unable to configure an UDP socket to be reusable. You will not be able to launch more than one UniDA gateway on this host.");
         }
         setCustomBroadcastAdress(broadcastAddress);
     }
@@ -243,9 +251,11 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
                 this.udpSocket.send(dp);
             } catch (UnknownHostException ex)
             {
+                LOGGER.error(this.getClass().getSimpleName() + ".send", ex);
                 throw new CommunicationException(ex);
             } catch (IOException ex)
             {
+                LOGGER.error(this.getClass().getSimpleName() + ".send", ex);
                 throw new CommunicationException(ex);
             }
 
@@ -289,6 +299,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
             return new ReceiveResult(packet.getLength(), origin, null);
         } catch (IOException ex)
         {
+            LOGGER.error(this.getClass().getSimpleName() + ".receive", ex);
             throw new CommunicationException(ex);
         }
 
@@ -317,6 +328,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
             return new ReceiveResult(packet.getLength(), origin, data);
         } catch (IOException ex)
         {
+            LOGGER.error(this.getClass().getSimpleName() + ".receive", ex);
             throw new CommunicationException(ex);
         }
     }
@@ -335,6 +347,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         }
 
         return true;
+
     }
 
 
@@ -345,5 +358,14 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         }
         
     }
+
+
+    @Override
+    public void registerMessageFactory(MessageFactory messageFactory) {
+
+        this.messageFactory = messageFactory;
+
+    }
+
 
 }

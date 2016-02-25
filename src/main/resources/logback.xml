@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
+  Copyright 2016 Victor Sonora Pombo <victor.pombo@mytechia.com>
+
+-->
+
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{dd/MM/yyyy-HH:mm:ss} %-5p: [%t] %-35c{1} - %m %ex%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>${java.io.tmpdir}/.logs/simple-message-protocol.log</File>
+        <encoder>
+            <pattern>%d{dd/MM/yyyy-HH:mm:ss} %-5p: [%t] %-35c{1} - %m %ex%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>${java.io.tmpdir}/.logs/simple-message-protocol.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5000KB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+        
+
+    <root level="DEBUG">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="file"/>
+    </root>
+
+</configuration>
