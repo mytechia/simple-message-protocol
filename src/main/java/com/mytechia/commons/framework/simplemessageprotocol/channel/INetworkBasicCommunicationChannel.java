@@ -49,6 +49,8 @@ public interface INetworkBasicCommunicationChannel extends ICommunicationChannel
     public ReceiveResult receive(byte[] data) throws CommunicationException;
 
     public ReceiveResult receive() throws CommunicationException;
+
+    public Command receiveMessage() throws CommunicationException;
     
     
 }

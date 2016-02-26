@@ -333,6 +333,17 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
         }
     }
 
+    @Override
+    public Command receiveMessage() throws CommunicationException {
+        ReceiveResult receiveResult = this.receive();
+
+        if (null != this.messageFactory) {
+            this.messageFactory.decodeMessage(receiveResult.getData());
+        }
+
+        return null;
+    }
+
 
     public InetAddress getIPAddress()
     {
