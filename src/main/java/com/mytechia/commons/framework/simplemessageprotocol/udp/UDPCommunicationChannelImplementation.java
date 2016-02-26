@@ -268,6 +268,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
     {
         byte[] rawData = msg.codeMessage();
         send(dev, rawData, 0, rawData.length);
+        LOGGER.trace("Sending message.", msg);
     }           
 
 
@@ -320,6 +321,7 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
     public ReceiveResult receive() throws CommunicationException
     {
         byte[] data = new byte[Command.MAX_MESSAGE_SIZE];
+
         try
         {
             DatagramPacket packet = new DatagramPacket(data, data.length);
@@ -331,17 +333,25 @@ public class UDPCommunicationChannelImplementation implements IUDPCommunicationC
             LOGGER.error(this.getClass().getSimpleName() + ".receive", ex);
             throw new CommunicationException(ex);
         }
+
     }
 
     @Override
     public Command receiveMessage() throws CommunicationException {
+
         ReceiveResult receiveResult = this.receive();
 
         if (null != this.messageFactory) {
-            this.messageFactory.decodeMessage(receiveResult.getData());
+            final Command receivedMessage =
+                    this.messageFactory.decodeMessage(receiveResult.getData());
+
+            LOGGER.trace("Receiving message", receivedMessage);
+
+            return receivedMessage;
         }
 
         return null;
+
     }
 
 
