@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class MessageFactory {
 
-    private Map<Integer, IMessageBuilder> messageBuilders = new HashMap<>();
+    private Map<Byte, IMessageBuilder> messageBuilders = new HashMap<>();
 
 
     public void registerMessageBuilder(IMessageBuilder messageBuilder) {

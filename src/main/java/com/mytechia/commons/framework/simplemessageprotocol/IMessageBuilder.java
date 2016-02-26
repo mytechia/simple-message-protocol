@@ -19,6 +19,8 @@
  ******************************************************************************/
 package com.mytechia.commons.framework.simplemessageprotocol;
 
+import com.mytechia.commons.framework.simplemessageprotocol.exception.MessageFormatException;
+
 /**
  *  An IMessageBuilder instance knows how to build a kind of Message instances.
  *  It knows its type identifier also (useful to build a MessageFactory).
@@ -27,9 +29,9 @@ package com.mytechia.commons.framework.simplemessageprotocol;
  */
 public interface IMessageBuilder {
 
-    int type();
+    byte type();
 
-    Command buildMessage(byte[] msgData);
+    Command buildMessage(byte[] msgData) throws MessageFormatException;
 
 
 }
