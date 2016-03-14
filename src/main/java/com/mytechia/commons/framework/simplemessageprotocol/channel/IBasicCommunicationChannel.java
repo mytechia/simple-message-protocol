@@ -21,6 +21,7 @@
 
 package com.mytechia.commons.framework.simplemessageprotocol.channel;
 
+import com.mytechia.commons.framework.simplemessageprotocol.Command;
 import com.mytechia.commons.framework.simplemessageprotocol.exception.CommunicationException;
 import com.mytechia.commons.framework.simplemessageprotocol.exception.TimeoutException;
 
@@ -42,11 +43,17 @@ public interface IBasicCommunicationChannel extends ICommunicationChannel {
 
     public void send(byte [] data) throws CommunicationException;
 
+    public void send(Command msg) throws CommunicationException;
+
     public int receive(byte [] data, int offset, int count, long timeout) throws CommunicationException;
 
     public int receive(byte [] data, int offset, int count) throws CommunicationException;
 
     public int receive(byte[] data) throws CommunicationException;
+
+    public Command receive() throws CommunicationException;
+
+    public Command receive(long timeout) throws CommunicationException;
 
     public void receiveComplete(byte[] data) throws CommunicationException, TimeoutException;
 

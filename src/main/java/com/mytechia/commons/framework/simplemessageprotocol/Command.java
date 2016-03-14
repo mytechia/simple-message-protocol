@@ -452,7 +452,7 @@ public abstract class Command
             return msgData[COMMAND_TYPE_INDEX];
         }
         else {
-            throw new MessageFormatException("Message header is too short.");
+            throw new MessageFormatException("Message header is too short. No message type. " + Arrays.toString(msgData));
         }
     }
 
@@ -469,7 +469,7 @@ public abstract class Command
             return msgData[ERROR_CODE_INDEX];
         }
         else {
-            throw new MessageFormatException("Message header is too short.");
+            throw new MessageFormatException("Message header is too short. No error code.");
         }
     }
 

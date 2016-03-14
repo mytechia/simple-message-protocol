@@ -20,7 +20,9 @@
 package com.mytechia.commons.framework.simplemessageprotocol;
 
 import com.mytechia.commons.framework.simplemessageprotocol.exception.MessageFormatException;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +34,8 @@ import java.util.Map;
  */
 public class MessageFactory {
 
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private Map<Byte, IMessageBuilder> messageBuilders = new HashMap<>();
 
 
@@ -41,6 +45,13 @@ public class MessageFactory {
 
 
     public Command decodeMessage(byte[] messageData) throws MessageFormatException {
+
+        if (messageData.length < Command.COMMAND_HEADER_SIZE) {
+
+            this.logger.warn("Message data too short: " + Arrays.toString(messageData));
+            return null;
+
+        }
 
         byte msgType = Command.getMessageType(messageData);
 
