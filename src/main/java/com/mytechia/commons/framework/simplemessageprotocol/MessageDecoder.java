@@ -32,7 +32,7 @@ import java.util.List;
  *  For each field it adds a MessageFieldInfo instance.
  *  There is a utility method to add a new field for each data type used.
  *
- * Created by Victor Sonora Pombo <victor.pombo@mytechia.com>.
+ * Created by Victor Sonora Pombo.
  */
 public class MessageDecoder {
 

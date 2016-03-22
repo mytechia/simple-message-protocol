@@ -22,7 +22,7 @@ package com.mytechia.commons.framework.simplemessageprotocol;
 /**
  *  An instance of this class represents meta info associated with one message field.
  *
- * Created by Victor Sonora Pombo <victor.pombo@mytechia.com>.
+ * Created by Victor Sonora Pombo.
  */
 public class MessageFieldInfo {
 

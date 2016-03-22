@@ -30,7 +30,7 @@ import java.util.Map;
  *  One instance of this class handles a map of message builder instances
  *  and it uses those builders to transform between byte[] and Command instances.
  *
- * Created by Victor Sonora Pombo <victor.pombo@mytechia.com>.
+ * Created by Victor Sonora Pombo.
  */
 public class MessageFactory {
 
