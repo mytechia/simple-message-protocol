@@ -7,7 +7,7 @@
 
     <groupId>com.mytechia</groupId>
     <artifactId>simple-message-protocol</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <packaging>jar</packaging>
     <url>https://github.com/GII/mytechia_commons</url>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>com.mytechia</groupId>
             <artifactId>mytechia-commons-library</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.0.9</version>
         </dependency>
     </dependencies>
 
@@ -158,7 +158,7 @@
 
         <repository>
             <id>nexus-snapshots</id>
-            <name>Snapshots en el repositorio de por aquí</name>
+            <name>Snapshots (local)</name>
             <url>http://bizancio:7080/nexus/content/repositories/snapshots/</url>
         </repository>
 
