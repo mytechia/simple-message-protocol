@@ -25,7 +25,7 @@ import com.mytechia.commons.framework.simplemessageprotocol.exception.MessageFor
  *  An IMessageBuilder instance knows how to build a kind of Message instances.
  *  It knows its type identifier also (useful to build a MessageFactory).
  *
- * Created by Victor Sonora Pombo <victor.pombo@mytechia.com>.
+ * Created by Victor Sonora Pombo.
  */
 public interface IMessageBuilder {
 

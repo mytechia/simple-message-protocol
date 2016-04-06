@@ -21,7 +21,7 @@ package com.mytechia.commons.framework.simplemessageprotocol;
 
 /**
  *
- * Created by Victor Sonora Pombo <victor.pombo@mytechia.com>.
+ * Created by Victor Sonora Pombo.
  */
 public enum MessageFieldType {
 
