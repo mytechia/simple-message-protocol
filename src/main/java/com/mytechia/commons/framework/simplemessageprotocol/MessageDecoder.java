@@ -260,7 +260,7 @@ public class MessageDecoder {
     public String readString(String name) throws MessageFormatException {
 
         StringBuilder stringBuilder = new StringBuilder(50);
-        int size = Command.readStringFromBytes(stringBuilder, this.dataArray, this.arrayIndex);
+        int size = Command.readStringFromBytes(stringBuilder, this.dataArray, this.arrayIndex, this.endianness);
 
         this.arrayIndex += size;
 

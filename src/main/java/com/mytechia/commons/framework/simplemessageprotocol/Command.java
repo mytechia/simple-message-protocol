@@ -215,10 +215,10 @@ public abstract class Command
 
     protected int readString(StringBuilder string, byte[] data, int offset) throws MessageFormatException
     {
-        return readStringFromBytes(string, data, offset);
+        return readStringFromBytes(string, data, offset, this.endianness);
     }
 
-    public static int readStringFromBytes(StringBuilder string, byte[] data, int offset) throws MessageFormatException
+    public  static int readStringFromBytes(StringBuilder string, byte[] data, int offset, Endianness endianness) throws MessageFormatException
     {
 
         if(data.length<=offset){
@@ -226,7 +226,15 @@ public abstract class Command
         }
 
         int localOffset = 0;
-        int idLen = EndianConversor.byteArrayLittleEndianToShort(data, offset);
+        
+        int idLen =0;
+        
+        if(endianness== Endianness.LITTLE_ENDIAN){
+            idLen = EndianConversor.byteArrayLittleEndianToShort(data, offset);
+        }else{
+            idLen = EndianConversor.byteArrayLittleEndianToShort(data, offset);
+        }
+        
         localOffset += EndianConversor.SHORT_SIZE_BYTES;
         string.replace(0, idLen, new String(data, offset+localOffset, idLen));
         string.setLength(idLen);
@@ -237,14 +245,20 @@ public abstract class Command
 
     protected void writeString(ByteArrayOutputStream dataStream, String string) throws IOException
     {
-        writeStringInStream(dataStream, string);
+        writeStringInStream(dataStream, string, this.endianness);
     }
 
-    public static int writeStringInStream(ByteArrayOutputStream dataStream, String string) throws IOException
+    public static  int writeStringInStream(ByteArrayOutputStream dataStream, String string, Endianness endianness) throws IOException
     {
         byte[] lenData = new byte[2];
         byte[] idData = string.getBytes();
-        EndianConversor.shortToLittleEndian((short) idData.length, lenData, 0);
+        
+        if(endianness== Endianness.LITTLE_ENDIAN){
+            EndianConversor.shortToLittleEndian((short) idData.length, lenData, 0);
+        }else{
+            EndianConversor.shortToBigEndian((short) idData.length, lenData, 0);
+        }
+        
         dataStream.write(lenData);
         dataStream.write(idData);
         return lenData.length + idData.length;
@@ -298,18 +312,30 @@ public abstract class Command
         bytes[COMMAND_TYPE_INDEX] = getCommandType();
         // Secuence number   
 
-        EndianConversor.ushortToLittleEndian(getSequenceNumber(), bytes, SEQUENCE_NUMBER_INDEX);
+        if(this.endianness==Endianness.LITTLE_ENDIAN){
+            EndianConversor.ushortToLittleEndian(getSequenceNumber(), bytes, SEQUENCE_NUMBER_INDEX);
+        }else{
+            EndianConversor.shortToBigEndian((short) getSequenceNumber(), bytes, SEQUENCE_NUMBER_INDEX);
+        }        
         
-        int sequenceNumber = EndianConversor.byteArrayLittleEndianToUShort(bytes, SEQUENCE_NUMBER_INDEX);
+        int sequenceNumber=0;
         
-        
+        if(this.endianness==Endianness.LITTLE_ENDIAN){
+            sequenceNumber = EndianConversor.byteArrayLittleEndianToUShort(bytes, SEQUENCE_NUMBER_INDEX);
+        }else{
+            sequenceNumber = EndianConversor.byteArrayBigEndianToShort(bytes, SEQUENCE_NUMBER_INDEX);
+        }
         
         //error code
         bytes[ERROR_CODE_INDEX] = getErrorCode();
 
 
-        // Data size (2 bytes)        
-        EndianConversor.ushortToLittleEndian(getDataSize(), bytes, DATA_SIZE_INDEX);
+        // Data size (2 bytes)     
+        if(this.endianness==Endianness.LITTLE_ENDIAN){
+            EndianConversor.ushortToLittleEndian(getDataSize(), bytes, DATA_SIZE_INDEX);
+        }else{
+            EndianConversor.shortToBigEndian((short) getDataSize(), bytes, DATA_SIZE_INDEX);
+        }
         
         // Message data        
         if (getDataSize() > 0) {            
@@ -359,7 +385,13 @@ public abstract class Command
         }
 
         // Obtain data size value
-        int dataSizeValue = EndianConversor.byteArrayLittleEndianToUShort(messageHeaderData, DATA_SIZE_INDEX);
+        int dataSizeValue=0;
+        if(this.endianness==Endianness.LITTLE_ENDIAN){
+            dataSizeValue = EndianConversor.byteArrayLittleEndianToUShort(messageHeaderData, DATA_SIZE_INDEX);
+        }else{
+            dataSizeValue = EndianConversor.byteArrayBigEndianToShort(messageHeaderData, DATA_SIZE_INDEX);
+        }
+        
         if (dataSizeValue >= 0) {
             this.dataSize = dataSizeValue;
         }
@@ -372,7 +404,13 @@ public abstract class Command
         // HeaderReply type
         this.errorCode = messageHeaderData[ERROR_CODE_INDEX];
         // Secuence number
-        int sequenceNumber = EndianConversor.byteArrayLittleEndianToUShort(messageHeaderData, SEQUENCE_NUMBER_INDEX);
+        int sequenceNumber=0;
+        if(this.endianness==Endianness.LITTLE_ENDIAN){
+            sequenceNumber = EndianConversor.byteArrayLittleEndianToUShort(messageHeaderData, SEQUENCE_NUMBER_INDEX);
+        }else{
+            sequenceNumber = EndianConversor.byteArrayBigEndianToShort(messageHeaderData, SEQUENCE_NUMBER_INDEX);
+        }
+        
         if (sequenceNumber >= 0) {
             setSequenceNumber(sequenceNumber);
         }

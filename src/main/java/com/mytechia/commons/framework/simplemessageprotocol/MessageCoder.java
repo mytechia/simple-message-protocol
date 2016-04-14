@@ -257,7 +257,7 @@ public class MessageCoder {
 
     public MessageCoder writeString (String data, String name) throws MessageFormatException {
         try {
-            final int lengthInBytes = writeStringInStream(this.dataStream, data);
+            final int lengthInBytes = writeStringInStream(this.dataStream, data, this.endianness);
 
             messageFieldInfoList.add(
                     new MessageFieldInfo(
