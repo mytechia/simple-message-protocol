@@ -24,6 +24,7 @@ import com.mytechia.commons.util.conversion.EndianConversor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,14 +111,22 @@ public class MessageCoder {
     }
 
 
-    public MessageCoder writeUShort(short data, String name) throws MessageFormatException {
+    public MessageCoder writeUShort(int data, String name) throws MessageFormatException {
         byte[] dataArray = new byte[EndianConversor.SHORT_SIZE_BYTES];
 
         if (this.endianness == Endianness.LITTLE_ENDIAN) {
             EndianConversor.ushortToLittleEndian(data, dataArray, 0);
-        } else {
-            throw new MessageFormatException("Not supported");
         }
+        else {
+            ByteBuffer buffer = ByteBuffer.allocate(4);
+            buffer.putInt(data);
+            dataArray[0] = buffer.array()[2];
+            dataArray[1] = buffer.array()[3];
+
+        }
+        /*else {
+            throw new MessageFormatException("Not supported");
+        }*/
 
         try {
             this.dataStream.write(dataArray);
@@ -164,14 +173,23 @@ public class MessageCoder {
     }
 
 
-    public MessageCoder writeUInt(int data, String name) throws MessageFormatException {
+    public MessageCoder writeUInt(long data, String name) throws MessageFormatException {
         byte[] dataArray = new byte[EndianConversor.INT_SIZE_BYTES];
 
         if (this.endianness == Endianness.LITTLE_ENDIAN) {
             EndianConversor.uintToLittleEndian(data, dataArray, 0);
-        } else {
-            throw new MessageFormatException("Not supported");
         }
+        else {
+            ByteBuffer buffer = ByteBuffer.allocate(8);
+            buffer.putLong(data);
+            dataArray[0] = buffer.array()[4];
+            dataArray[1] = buffer.array()[5];
+            dataArray[2] = buffer.array()[6];
+            dataArray[3] = buffer.array()[7];
+        }
+        /*else {
+            throw new MessageFormatException("Not supported");
+        }*/
 
         try {
             this.dataStream.write(dataArray);
