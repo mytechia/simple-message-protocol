@@ -318,9 +318,9 @@ public abstract class Command
             EndianConversor.shortToBigEndian((short) getSequenceNumber(), bytes, SEQUENCE_NUMBER_INDEX);
         }        
         
-        int sequenceNumber=0;
+        int sequenceNumber = 0;
         
-        if(this.endianness==Endianness.LITTLE_ENDIAN){
+        if(this.endianness == Endianness.LITTLE_ENDIAN){
             sequenceNumber = EndianConversor.byteArrayLittleEndianToUShort(bytes, SEQUENCE_NUMBER_INDEX);
         }else{
             sequenceNumber = EndianConversor.byteArrayBigEndianToShort(bytes, SEQUENCE_NUMBER_INDEX);

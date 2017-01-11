@@ -126,10 +126,11 @@ public class MessageDecoder {
         if (this.endianness == Endianness.LITTLE_ENDIAN) {
             data = EndianConversor.byteArrayLittleEndianToUShort(this.dataArray, this.arrayIndex);
         } else {
-            throw new MessageFormatException("Not supported");
+            data = EndianConversor.byteArrayBigEndianToUShort(this.dataArray, this.arrayIndex);
+            //throw new MessageFormatException("Not supported");
         }
 
-        this.arrayIndex += EndianConversor.INT_SIZE_BYTES;
+        this.arrayIndex += EndianConversor.SHORT_SIZE_BYTES;
 
         this.messageFieldInfoList.add(
                 new MessageFieldInfo(

@@ -118,10 +118,16 @@ public class MessageCoder {
             EndianConversor.ushortToLittleEndian(data, dataArray, 0);
         }
         else {
-            ByteBuffer buffer = ByteBuffer.allocate(4);
+            /*ByteBuffer buffer = ByteBuffer.allocate(4);
             buffer.putInt(data);
+
             dataArray[0] = buffer.array()[2];
             dataArray[1] = buffer.array()[3];
+
+            ByteBuffer wrapped = ByteBuffer.wrap(dataArray);
+            int test = wrapped.getShort();
+            System.out.println(test);*/
+            EndianConversor.ushortToBigEndian(data,dataArray,0);
 
         }
         /*else {
@@ -180,12 +186,14 @@ public class MessageCoder {
             EndianConversor.uintToLittleEndian(data, dataArray, 0);
         }
         else {
-            ByteBuffer buffer = ByteBuffer.allocate(8);
+            /*ByteBuffer buffer = ByteBuffer.allocate(8);
             buffer.putLong(data);
             dataArray[0] = buffer.array()[4];
             dataArray[1] = buffer.array()[5];
             dataArray[2] = buffer.array()[6];
             dataArray[3] = buffer.array()[7];
+            */
+            EndianConversor.uintToBigEndian(data,dataArray,0);
         }
         /*else {
             throw new MessageFormatException("Not supported");
