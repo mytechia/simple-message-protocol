@@ -65,7 +65,6 @@ public class MessageDecoder {
     private void reset() {
         this.messageFieldInfoList = new ArrayList<>();
         this.nextFieldIndex = 1;
-        this.arrayIndex = 0;
     }
 
 
