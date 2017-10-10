@@ -245,6 +245,17 @@ public class MessageDecoder {
         return data;
     }
     
+    public int[] readUShortArray(String name, int elementsNumber) throws MessageFormatException {
+
+        int[] data = new int[elementsNumber];
+
+        for(int i = 0; i < elementsNumber; i++){
+            data[i] = this.readUShort(name + "_" + (i+1));
+        }
+
+        return data;
+    }
+    
     public int[] readIntArray(String name, int elementsNumber) {
 
         int[] data = new int[elementsNumber];

@@ -361,6 +361,16 @@ public class MessageCoder {
         return this;
 
     }
+    
+    public MessageCoder writeUShortArray(int[] data, String name) throws MessageFormatException {
+
+        for (int i = 0; i < data.length; i++) {
+            this.writeUShort(data[i], name + "_" + (i + 1));
+        }
+
+        return this;
+
+    }
 
     public MessageCoder writeIntArray(int[] data, String name) throws MessageFormatException {
         
